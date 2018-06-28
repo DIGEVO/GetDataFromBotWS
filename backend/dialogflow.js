@@ -53,11 +53,12 @@ exports.processIds = async ({ ids }, ws, sid) => {
 
 	(async () => {
 		let csvArr = [];
+		console.log(`-------------------------------> ${_ids.length}`);
 		for (let i = 0; i < _ids.length; i++) {
 			await (async () => {
 				const delay = time => new Promise(res => setTimeout(() => res(), time));
 				await delay(1500);
-				// console.log(`------------------------------------------------------------>>>> ${i}`);
+				console.log(`------------------------------------------------------------>>>> ${i}`);
 				const id = _ids[i];
 				const value = await getPromiseRequest(id, cachedData.token);
 				const intent = JSON.parse(value.replace(/\n/g, ' ').replace(/\x5C\x6E/g, '|'));
