@@ -6036,25 +6036,29 @@ try {
 	};
 
 	ws.onclose = closeEvent => {
-		$('.modal').modal('hide');
+		$('#pleaseWaitDialog').modal('hide');
 		console.log(`Websocket client has closed, code: ${closeEvent.code}, reason: ${closeEvent.reason ? closeEvent.reason : 'no reason'}`);
 	};
 
 	ws.onerror = errorEvent => {
-		$('.modal').modal('hide');
+		$('#pleaseWaitDialog').modal('hide');
 		console.log('Websocket client: An error has occurred!');
 	};
 
 	ws.onmessage = messageEvent => {
-		$('.modal').modal('hide');
 		const message = JSON.parse(messageEvent.data);
 		let action = message.event;
+
+		if (action != "update") {
+			$('#pleaseWaitDialog').modal('hide');
+		}
 
 		const actionHandlers = {
 			'intents': () => { renderIntentsList(message.data, ws); },
 			'reload': () => { renderTokenRequest(message.data, ws); },
 			'errors': () => { renderErrors(message.data, ws); },
 			'details': () => { downloadDetails(message.data, ws); },
+			'update': () => { updateProgressBar(message.data, ws); },
 			'default': () => {
 				// TODO ver q hacer aqui
 			}
@@ -6187,7 +6191,7 @@ function renderTokenRequest(data, ws) {
 }
 
 function renderErrors({ errors }, ws) {
-	$("#msgbox").text((errors || []).join("<br/>"));	
+	$("#msgbox").text((errors || []).join("<br/>"));
 }
 
 function sendToken(event) {
@@ -6205,9 +6209,9 @@ function sendToken(event) {
 		event: "token",
 		data: { token: $("#tokenbox").val() }
 	};
-	
-	sendMsg(ws,msg);
-	$('.modal').modal('show');
+
+	sendMsg(ws, msg);
+	$('#pleaseWaitDialog').modal('show');
 }
 
 function sendSelectedIntents(event) {
@@ -6225,8 +6229,8 @@ function sendSelectedIntents(event) {
 		data: { ids: selectedIds }
 	};
 
-	sendMsg(ws,msg);
-	$('.modal').modal('show');
+	sendMsg(ws, msg);
+	$('#pleaseWaitDialog').modal('show');
 }
 
 function sendReload(ws) {
@@ -6237,7 +6241,7 @@ function sendReload(ws) {
 		data: {}
 	};
 
-	sendMsg(ws,msg);
+	sendMsg(ws, msg);
 }
 
 function sendMsg(ws, msg) {
@@ -6248,4 +6252,10 @@ function sendMsg(ws, msg) {
 
 	ws.send(JSON.stringify(msg));
 }
+
+function updateProgressBar({ percent }, ws) {
+	//style="width: 100%">
+	$("#progressbar").width(`${percent}%`);
+}
+
 },{"file-saver":1,"moment-timezone":3,"moment/locale/es":5}]},{},[7]);

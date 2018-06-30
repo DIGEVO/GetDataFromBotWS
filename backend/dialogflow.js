@@ -53,12 +53,14 @@ exports.processIds = async ({ ids }, ws, sid) => {
 
 	(async () => {
 		let csvArr = [];
-		console.log(`-------------------------------> ${_ids.length}`);
+		// console.log(`-------------------------------> ${_ids.length}`);
 		for (let i = 0; i < _ids.length; i++) {
 			await (async () => {
 				const delay = time => new Promise(res => setTimeout(() => res(), time));
 				await delay(1500);
-				console.log(`------------------------------------------------------------>>>> ${i}`);
+				console.log(`------------------------------------------------------------>>>> ${i + 1} of ${_ids.length}`);
+				sendUpdate((i + 1) / _ids.length * 100, ws);
+
 				const id = _ids[i];
 				const value = await getPromiseRequest(id, cachedData.token);
 				const intent = JSON.parse(value.replace(/\n/g, ' ').replace(/\x5C\x6E/g, '|'));
@@ -107,6 +109,15 @@ exports.reload = (data, ws, sid) => {
 	const msg = {
 		event: "reload",
 		data: {}
+	};
+
+	sendMsg(ws, msg);
+}
+
+function sendUpdate(percent, ws) {
+	const msg = {
+		event: "update",
+		data: { percent: percent }
 	};
 
 	sendMsg(ws, msg);

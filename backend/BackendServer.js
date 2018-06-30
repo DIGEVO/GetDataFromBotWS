@@ -29,7 +29,7 @@ class BackendServer {
 					'token': () => { df.processToken(message.data, ws, sid); },
 					'ids': () => { df.processIds(message.data, ws, sid); },
 					'default': () => {
-						ws.send(`{"event":"errors", "data": ["An error has occurred."]}`);
+						ws.send(`{"event":"errors", "data": {"errors":["An error has occurred."]}}`);
 					}
 				};
 
